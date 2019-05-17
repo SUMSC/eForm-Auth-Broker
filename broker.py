@@ -76,8 +76,8 @@ class HealthcheckHandler(tornado.web.RequestHandler):
 def make_app():
     tornado.options.parse_command_line()
     return tornado.web.Application([
-        (r"/", BrokerHandler),
-        (r"/healthcheck",HealthcheckHandler),
+        (r"/v2/login", BrokerHandler),
+        (r"/v2/healthcheck",HealthcheckHandler),
     ],
     )
 
