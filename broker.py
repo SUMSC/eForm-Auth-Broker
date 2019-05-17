@@ -23,18 +23,29 @@ url2 = "http://myauth.suda.edu.cn/default.aspx?app=eform"
 class BrokerHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Headers", "Content-Type")
+        self.set_header("Access-Control-Allow-Headers", "Content-Type,Access")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
 
 
     def prepare(self):
-        if self.request.headers['Content-Type'] == 'application/json':
+        if 'Content-Type' in self.request.headers and  'application/json' in self.request.headers['Content-Type']:
             self.args = json.loads(self.request.body.decode('utf8'))
+        elif self.request.method=="OPTIONS":
+            self.set_status(200)
+            self.finish()
         else:
             self.set_status(status_code=412)
             self.write(json.dumps({"status": False, "data": "Expect json"}))
             self.finish()
         # Access self.args directly instead of using self.get_argument.
+    
+    def options(self):
+        """
+        对跨域 JSON 返回OPTIONS 200
+        :return:
+        """
+        self.set_status(200)
+        self.finish()
 
     async def post(self):
         if self.args.get('id') and self.args.get('token'):
@@ -85,6 +96,7 @@ def make_app():
         (r"/v2/login", BrokerHandler),
         (r"/v2/healthcheck",HealthcheckHandler),
     ],
+    debug=True
     )
 
 
