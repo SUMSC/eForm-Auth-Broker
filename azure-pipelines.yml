@@ -15,7 +15,7 @@ variables:
 steps:
 - script: |
     conda create -n test python=3.6 pip -y
-    conda activate test
+    source activate test
     pip install -r requirements.txt
     python test.py
   displayName: 'Run Test'
