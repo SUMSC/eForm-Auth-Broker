@@ -15,7 +15,7 @@ variables:
 steps:
 - script: |
     docker build -f Dockerfile -t $(imageName) .
-    docker login -u $(dockerId) -p $(pswd)
+    docker login -u $(dockerId) -p $(dockerpwd)
     docker push $(imageName)
   displayName: 'Build and push'
 
