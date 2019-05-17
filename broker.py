@@ -23,7 +23,7 @@ url2 = "http://myauth.suda.edu.cn/default.aspx?app=eform"
 class BrokerHandler(tornado.web.RequestHandler):
     def prepare(self):
         if self.request.headers['Content-Type'] == 'application/json':
-            self.args = json.loads(self.request.body)
+            self.args = json.loads(self.request.body.decode('utf8'))
         else:
             self.set_status(status_code=412)
             self.write(json.dumps({"status": False, "data": "Expect json"}))
