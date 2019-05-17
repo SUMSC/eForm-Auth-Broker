@@ -14,8 +14,7 @@ variables:
 
 steps:
 - script: |
-    pip3 install -r /opt/broker/requirements.txt
-    cd /opt/broker
+    pip3 install -r requirements.txt
     python3 test.py
   displayName: 'Run Test'
 
