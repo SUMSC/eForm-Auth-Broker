@@ -24,6 +24,10 @@ class BrokerHandler(tornado.web.RequestHandler):
     def prepare(self):
         if self.request.headers['Content-Type'] == 'application/json':
             self.args = json.loads(self.request.body)
+        else:
+            self.set_status(status_code=412)
+            self.write(json.dumps({"status": False, "data": "Expect json"}))
+            self.finish()
         # Access self.args directly instead of using self.get_argument.
 
     async def post(self):
@@ -62,23 +66,28 @@ class BrokerHandler(tornado.web.RequestHandler):
             self.write(json.dumps({"status": False, "data": "wrong params"}))
             self.finish()
 
+class HealthcheckHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.set_status(status_code=200)
+        self.write("ok")
+        self.finish()
+        
 
 def make_app():
     tornado.options.parse_command_line()
     return tornado.web.Application([
         (r"/", BrokerHandler),
+        (r"/healthcheck",HealthcheckHandler),
     ],
-        debug=True,
     )
 
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()
 
-    # Create the global connection pool.
     app = make_app()
     server = tornado.httpserver.HTTPServer(app)
-    server.bind(options.port)
+    server.listen(options.port)
     if os.name == 'nt':
         server.start(1)
     else:
