@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "venv\\Scripts\\python.exe",
+    "python.pythonPath": "d:\\Amber\\Projects\\eForm\\eForm-Auth-Broker\\venv\\Scripts\\python.exe",
     "python.linting.pylintEnabled": true,
     "python.linting.pycodestyleEnabled": false,
     "python.linting.enabled": true
