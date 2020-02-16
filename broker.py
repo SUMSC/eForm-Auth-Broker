@@ -26,7 +26,6 @@ class BrokerHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Headers", "Content-Type,Access")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
 
-
     def prepare(self):
         if 'Content-Type' in self.request.headers and  'application/json' in self.request.headers['Content-Type']:
             self.args = json.loads(self.request.body.decode('utf8'))
@@ -93,8 +92,8 @@ class HealthcheckHandler(tornado.web.RequestHandler):
 def make_app():
     tornado.options.parse_command_line()
     return tornado.web.Application([
-        (r"/v2/login", BrokerHandler),
-        (r"/v2/healthcheck",HealthcheckHandler),
+        (r"/login", BrokerHandler),
+        (r"/healthcheck", HealthcheckHandler),
     ],
     debug=True
     )
