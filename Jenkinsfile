@@ -29,7 +29,7 @@ pipeline {
         echo "${ENTERPRISE}-docker.pkg.coding.net/eform-auth/docker/broker:c159cf5386960b155393666359f3fafa5d789116"
         script {
           docker.withRegistry("https://${ARTIFACT_BASE}", "${env.DOCKER_REGISTRY_CREDENTIALS_ID}") {
-            docker.build("${IMAGE_NAME}:${env.GIT_BUILD_REF}", "--pull .")
+            docker.build("${ARTIFACT_IMAGE}:${env.GIT_BUILD_REF}", "--pull .")
           }
         }
       }
@@ -38,7 +38,7 @@ pipeline {
       steps {
         script {
           docker.withRegistry("https://${ARTIFACT_BASE}", "${env.DOCKER_REGISTRY_CREDENTIALS_ID}") {
-            def image=docker.image("${IMAGE_NAME}:${env.GIT_BUILD_REF}")
+            def image=docker.image("${ARTIFACT_IMAGE}:${env.GIT_BUILD_REF}")
             image.push()
             image.push("latest")
           }
