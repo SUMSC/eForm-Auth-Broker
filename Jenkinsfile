@@ -14,20 +14,25 @@ pipeline {
       }
     }
     stage('构建') {
-      script {
-        docker.withRegistry("https://${ARTIFACT_BASE}", "${env.DOCKER_REGISTRY_CREDENTIALS_ID}") {
-          docker.build("${ARTIFACT_IMAGE}:${env.GIT_BUILD_REF}", "--pull .")
+      steps {
+        script {
+          docker.withRegistry("https://${ARTIFACT_BASE}", "${env.DOCKER_REGISTRY_CREDENTIALS_ID}") {
+            docker.build("${ARTIFACT_IMAGE}:${env.GIT_BUILD_REF}", "--pull .")
+          }
         }
       }
     }
     stage('推送制品') {
-      script {
-        docker.withRegistry("https://${ARTIFACT_BASE}", "${env.DOCKER_REGISTRY_CREDENTIALS_ID}") {
-          def image=docker.image("${ARTIFACT_IMAGE}:${env.GIT_BUILD_REF}")
-          image.push()
-          image.push("latest")
+      steps {
+        script {
+          docker.withRegistry("https://${ARTIFACT_BASE}", "${env.DOCKER_REGISTRY_CREDENTIALS_ID}") {
+            def image=docker.image("${ARTIFACT_IMAGE}:${env.GIT_BUILD_REF}")
+            image.push()
+            image.push("latest")
+          }
         }
       }
+      
     }
   }
   environment {
