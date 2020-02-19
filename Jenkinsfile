@@ -26,7 +26,6 @@ pipeline {
     }
     stage("构建") {
       steps {
-        echo "${ENTERPRISE}-docker.pkg.coding.net/eform-auth/docker/broker:c159cf5386960b155393666359f3fafa5d789116"
         script {
           docker.withRegistry("https://${ARTIFACT_BASE}", "${env.DOCKER_REGISTRY_CREDENTIALS_ID}") {
             docker.build("${ARTIFACT_IMAGE}:${env.GIT_BUILD_REF}", "--pull .")
