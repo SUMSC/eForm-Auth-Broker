@@ -1,15 +1,26 @@
 pipeline {
   agent any
+  environment {
+    IMAGE_NAME = 'eform/auth-broker'
+    DOCKER_TAG = 'broker'
+
+    ENTERPRISE = 'eform-amber'
+    PROJECT = 'eform-auth'
+    ARTIFACT_REPO = 'docker'
+    
+    ARTIFACT_BASE = '${ENTERPRISE}-docker.pkg.coding.net'
+    ARTIFACT_IMAGE = '${ARTIFACT_BASE}/${PROJECT}/${ARTIFACT_REPO}/${DOCKER_TAG}'
+  }
   stages {
     stage('检出') {
       steps {
         checkout([
-              $class: 'GitSCM',
-              branches: [[name: env.GIT_BUILD_REF]],
-              userRemoteConfigs: [[
-                url: env.GIT_REPO_URL,
-                credentialsId: env.CREDENTIALS_ID
-            ]]
+            $class: 'GitSCM',
+            branches: [[name: env.GIT_BUILD_REF]],
+            userRemoteConfigs: [[
+              url: env.GIT_REPO_URL,
+              credentialsId: env.CREDENTIALS_ID
+          ]]
         ])
       }
     }
@@ -35,15 +46,5 @@ pipeline {
       
     }
   }
-  environment {
-    IMAGE_NAME = 'eform/auth-broker'
-    DOCKER_TAG = 'broker'
-
-    ENTERPRISE = 'eform-amber'
-    PROJECT = 'eform-auth'
-    ARTIFACT_REPO = 'docker'
-    
-    ARTIFACT_BASE = '${ENTERPRISE}-docker.pkg.coding.net'
-    ARTIFACT_IMAGE = '${ARTIFACT_BASE}/${PROJECT}/${ARTIFACT_REPO}/${DOCKER_TAG}'
-  }
+  
 }
