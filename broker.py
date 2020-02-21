@@ -69,17 +69,17 @@ class BrokerHandler(tornado.web.RequestHandler):
                 res = json.loads(response.body).get('data')
                 res['exp'] = datetime.utcnow() + timedelta(days=3)
                 self.set_status(status_code=201)
-                self.write(json.dumps({"status": True, "data": jwt.encode(
+                self.write(json.dumps({"code": 201, "message": jwt.encode(
                     payload=res, key=options.secret, algorithm='HS256').decode('utf8')}))
                 self.finish()
             else:
                 self.set_status(status_code=400)
                 self.write(json.dumps(
-                    {"status": False, "data": "Authentication error"}))
+                    {"code": 400, "message": "Authentication error"}))
                 self.finish()
         else:
             self.set_status(status_code=400)
-            self.write(json.dumps({"status": False, "data": "wrong params"}))
+            self.write(json.dumps({"code": 400, "message": "Wrong params"}))
             self.finish()
 
 class HealthcheckHandler(tornado.web.RequestHandler):
