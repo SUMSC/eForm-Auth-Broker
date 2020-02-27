@@ -23,7 +23,7 @@ url2 = "http://myauth.suda.edu.cn/default.aspx?app=eform"
 class BrokerHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
-        # self.set_header("Access-Control-Allow-Headers", "content-type")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
 
     def prepare(self):
