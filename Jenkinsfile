@@ -43,7 +43,55 @@ pipeline {
           }
         }
       }
-      
+    }
+    stage("部署") {
+      steps {
+        script {
+          def remote = [:]
+          remote.name = "qcloud"
+          remote.host = "wzhzzmzzy.xyz"
+          remote.port = 12450
+          remote.user = "amber"
+          remote.allowAnyHosts = true
+          dockerUser = ""
+          dockerPassword = ""
+          DOCKER_SERVER = "eform-amber-docker.pkg.coding.net"
+          DOCKER_REPO = "${DOCKER_SERVER}/eform-auth/docker"
+          BROKER_DOCKER_TAG = "broker"
+          BROKER_DOCKER_NAME = "eform-auth-broker"
+          BROKER_PORT = "8000"
+          LOG_PATH = "/home/amber/eForm-Backend/logs"
+          withCredentials([usernamePassword(
+            credentialsId: env.CODING_ARTIFACTS_CREDENTIALS_ID,
+            usernameVariable: 'DOCKER_USER',
+            passwordVariable: 'DOCKER_PASSWORD'
+          )]) {
+            echo "获取 Docker 认证信息..."
+            dockerUser = DOCKER_USER
+            dockerPassword = DOCKER_PASSWORD
+          }
+          withCredentials([sshUserPrivateKey(
+            credentialsId: env.QCLOUD_CREDENTIALS_ID,
+            keyFileVariable: 'id_rsa'
+          )]) {
+            echo "开始部署..."
+            remote.identityFile = id_rsa
+            sshCommand remote: remote, command: "docker login -u ${dockerUser} -p ${dockerPassword} ${DOCKER_SERVER}"
+            // eForm-Auth
+            echo "部署 eForm-Auth"
+            sshCommand remote: remote, command: "docker pull ${DOCKER_REPO}/${AUTH_DOCKER_TAG}"
+            sshCommand remote: remote, command: "docker stop ${AUTH_DOCKER_NAME} | true"
+            sshCommand remote: remote, command: "docker rm ${AUTH_DOCKER_NAME} | true"
+            sshCommand remote: remote, command: "docker run --name ${AUTH_DOCKER_NAME} --net host -p 127.0.0.1:${AUTH_PORT}:${AUTH_PORT} -v ${LOG_PATH}:/var/log/eform -d ${DOCKER_REPO}/${AUTH_DOCKER_TAG}"
+            // eForm-Auth-Broker
+            echo "部署 eForm-Auth-Broker"
+            sshCommand remote: remote, command: "docker pull ${DOCKER_REPO}/${BROKER_DOCKER_TAG}"
+            sshCommand remote: remote, command: "docker stop ${BROKER_DOCKER_NAME} | true"
+            sshCommand remote: remote, command: "docker rm ${BROKER_DOCKER_NAME} | true"
+            sshCommand remote: remote, command: "docker run --name ${BROKER_DOCKER_NAME} --net host -p 127.0.0.1:${BROKER_PORT}:${BROKER_PORT} -d ${DOCKER_REPO}/${BROKER_DOCKER_TAG}"
+          }
+        }
+      }
     }
   }
   
