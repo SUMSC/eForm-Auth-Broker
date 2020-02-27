@@ -77,12 +77,6 @@ pipeline {
             echo "开始部署..."
             remote.identityFile = id_rsa
             sshCommand remote: remote, command: "docker login -u ${dockerUser} -p ${dockerPassword} ${DOCKER_SERVER}"
-            // eForm-Auth
-            echo "部署 eForm-Auth"
-            sshCommand remote: remote, command: "docker pull ${DOCKER_REPO}/${AUTH_DOCKER_TAG}"
-            sshCommand remote: remote, command: "docker stop ${AUTH_DOCKER_NAME} | true"
-            sshCommand remote: remote, command: "docker rm ${AUTH_DOCKER_NAME} | true"
-            sshCommand remote: remote, command: "docker run --name ${AUTH_DOCKER_NAME} --net host -p 127.0.0.1:${AUTH_PORT}:${AUTH_PORT} -v ${LOG_PATH}:/var/log/eform -d ${DOCKER_REPO}/${AUTH_DOCKER_TAG}"
             // eForm-Auth-Broker
             echo "部署 eForm-Auth-Broker"
             sshCommand remote: remote, command: "docker pull ${DOCKER_REPO}/${BROKER_DOCKER_TAG}"
